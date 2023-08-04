@@ -26,15 +26,16 @@ def evaluate_train_test_split(scenario: ASlibScenario, approach, metrics, fold: 
 
     # approach.initialize(len(scenario.algorithms))
     print(scenario.algorithms)
-    feature_data = scenario.feature_data.to_numpy()
-    performance_data = scenario.performance_data.to_numpy()
-    feature_cost_data = scenario.feature_cost_data.to_numpy() if scenario.feature_cost_data is not None else None
-
-    feature_data, performance_data, feature_cost_data = shuffle_in_unison(feature_data, performance_data,feature_cost_data)
-
-    scenario.feature_data = pd.DataFrame(feature_data)
-    scenario.performance_data = pd.DataFrame(performance_data)
-    scenario.feature_cost_data = pd.DataFrame(feature_cost_data)
+    print(fold)
+    # feature_data = scenario.feature_data.to_numpy()
+    # performance_data = scenario.performance_data.to_numpy()
+    # feature_cost_data = scenario.feature_cost_data.to_numpy() if scenario.feature_cost_data is not None else None
+    #
+    # feature_data, performance_data, feature_cost_data = shuffle_in_unison(feature_data, performance_data,feature_cost_data)
+    #
+    # scenario.feature_data = pd.DataFrame(feature_data)
+    # scenario.performance_data = pd.DataFrame(performance_data)
+    # scenario.feature_cost_data = pd.DataFrame(feature_cost_data)
     approach.fit(scenario,fold, len(scenario.instances)) #def fit(self, scenario: ASlibScenario, fold: int, num_instances: int):
     approach_metric_values = np.zeros(len(metrics))
 
@@ -57,7 +58,7 @@ def evaluate_train_test_split(scenario: ASlibScenario, approach, metrics, fold: 
 
     start_time = time.time()
     total_time = 0
-    for instance_id in range(621, last_instance_id):
+    for instance_id in range(len(scenario.instances)*(fold-1)//10, len(scenario.instances)*(fold)//10):
 
         if instance_id % 100 == 0 and instance_id > 0:
             end_time = time.time()

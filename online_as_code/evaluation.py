@@ -1,8 +1,10 @@
 from aslib_scenario.aslib_scenario import ASlibScenario
 import numpy as np
+import pandas as pd
 import logging
 import database_utils
 from evaluation_of_train_test_split import evaluate_train_test_split
+from evaluation_of_train_test_split import shuffle_in_unison
 
 logger = logging.getLogger("evaluation")
 logger.addHandler(logging.StreamHandler())
@@ -48,7 +50,17 @@ def evaluate_scenario(scenario_name: str, path_to_scenario_folder:str, approach,
     scenario = ASlibScenario()
     scenario.read_scenario(path_to_scenario_folder + scenario_name)
     print_stats_of_scenario(scenario)
-    evaluate(scenario, approach, metrics, amount_of_training_scenario_instances, fold, db_config)
+    feature_data = scenario.feature_data.to_numpy()
+    performance_data = scenario.performance_data.to_numpy()
+    feature_cost_data = scenario.feature_cost_data.to_numpy() if scenario.feature_cost_data is not None else None
+
+    feature_data, performance_data, feature_cost_data = shuffle_in_unison(feature_data, performance_data,feature_cost_data)
+
+    scenario.feature_data = pd.DataFrame(feature_data)
+    scenario.performance_data = pd.DataFrame(performance_data)
+    scenario.feature_cost_data = pd.DataFrame(feature_cost_data)
+    for folds in range(1, 11):
+        evaluate(scenario, approach, metrics, amount_of_training_scenario_instances, folds, db_config)
     return scenario_name
 
 

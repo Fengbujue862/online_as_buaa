@@ -35,10 +35,12 @@ class SATzilla11:
         # print(scenario.performance_data.values.shape) #694,27
         # print(num_instances)#694
         # resample `amount_of_training_instances` instances and preprocess them accordingly
-        a = np.append(scenario.feature_data.values[0:552,:], scenario.feature_data.values[622:,:], axis=0)
-        b = np.append(scenario.performance_data.values[0:552,:], scenario.performance_data.values[622:,:], axis=0)
+        print(num_instances*(fold-1)//10,end='   ')
+        print(num_instances*(fold)//10)
+        a = np.append(scenario.feature_data.values[0:num_instances*(fold-1)//10,:], scenario.feature_data.values[num_instances*(fold)//10:,:], axis=0)
+        b = np.append(scenario.performance_data.values[0:num_instances*(fold-1)//10,:], scenario.performance_data.values[num_instances*(fold)//10:,:], axis=0)
         features, performances = self._resample_instances(
-            scenario.feature_data.values[:621,:], scenario.performance_data.values[:621,:], 624, random_state=42)
+            a, b, num_instances*9//10, random_state=42)
         features, performances = self._preprocess_scenario(
             scenario, features, performances)
 
